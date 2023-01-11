@@ -1,3 +1,4 @@
+
 const fs = require('fs');
 const path = require('path');
 const sprintf = require('sprintf-js').sprintf;
@@ -18,9 +19,9 @@ const zeroPaddedNumber = (num) => {
 const readCounter = (callback) => {
   fs.readFile(exports.counterFile, (err, fileData) => {
     if (err) {
-      callback(null, 0);
+      callback(null, 0); //if no number, second parameter is 0
     } else {
-      callback(null, Number(fileData));
+      callback(null, Number(fileData)); //if number exists, second parameter is the number
     }
   });
 };
@@ -31,16 +32,33 @@ const writeCounter = (count, callback) => {
     if (err) {
       throw ('error writing counter');
     } else {
-      callback(null, counterString);
+      callback(null, counterString); //only runs CB on success, second param is the number as a string
     }
   });
 };
 
 // Public API - Fix this function //////////////////////////////////////////////
 
-exports.getNextUniqueId = () => {
-  counter = counter + 1;
-  return zeroPaddedNumber(counter);
+exports.getNextUniqueId = (callback) => {
+  //we need to call the callback at some point with the newest counter
+  //counter = counter + 1;
+
+  readCounter((err, counter) => {
+    if (err) {
+      console.log('error in read counter', err);
+    } else { //if we do get a number
+      console.log(counter);
+      writeCounter(counter = counter + 1, (err, counter) => {
+        if (err) {
+          console.log('error in write counter', err);
+        } else {
+          callback(null, counter);
+          return counter; //this needs to end up in callback(null, counter)
+        }
+      });
+    }
+  });
+  //return zeroPaddedNumber(counter);
 };
 
 
