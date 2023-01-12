@@ -21,6 +21,8 @@ const readCounter = (callback) => {
     if (err) {
       callback(null, 0); //if no number, second parameter is 0
     } else {
+      console.log('This is file data', fileData);
+      console.log('This is line 24', Number(fileData));
       callback(null, Number(fileData)); //if number exists, second parameter is the number
     }
   });
@@ -42,27 +44,32 @@ const writeCounter = (count, callback) => {
 exports.getNextUniqueId = (callback) => {
   //we need to call the callback at some point with the newest counter
   //counter = counter + 1;
-
-  readCounter((err, counter) => {
+  //var count = 0;
+  readCounter((err, counter1) => {
     if (err) {
       console.log('error in read counter', err);
     } else { //if we do get a number
-      console.log(counter);
-      writeCounter(counter = counter + 1, (err, counter) => {
+      console.log(counter1);
+      return writeCounter(counter1 = counter1 + 1, (err, counter1) => {
         if (err) {
           console.log('error in write counter', err);
         } else {
-          callback(null, counter);
-          return counter; //this needs to end up in callback(null, counter)
+          //count = counter1;
+          //console.log('here is count: ', count);
+          //++counter;
+          counter = counter1;
+          return callback(null, counter1);
+          //return counter1;
         }
       });
     }
   });
-  //return zeroPaddedNumber(counter);
+  //return count;
+  return zeroPaddedNumber(counter + 1);
 };
 
 
 
 // Configuration -- DO NOT MODIFY //////////////////////////////////////////////
-
+console.log(__dirname);
 exports.counterFile = path.join(__dirname, 'counter.txt');

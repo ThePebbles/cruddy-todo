@@ -7,10 +7,38 @@ var items = {};
 
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
+/* todos.create('todo1', (err, data) => {
+  const todoCount = fs.readdirSync(todos.dataDir).length;
+  expect(todoCount).to.equal(1);
+  todos.create('todo2', (err, data) => {
+    expect(fs.readdirSync(todos.dataDir)).to.have.lengthOf(2);
+    done();
+  });
+});
+ */
+
 exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId();
-  items[id] = text;
-  callback(null, { id, text });
+  //use id to create file path inside dataDir
+  //Each time a POST request is made to the collection route, save a file with the todo item in this folder.
+
+  //https://nodejs.org/api/fs.html
+  //https://www.geeksforgeeks.org/node-js-fs-writefile-method/
+  var id = counter.getNextUniqueId((err, counter) => {
+    if (err) {
+      console.log('error in getNextUniqueId', err);
+    } else { //if we do get a number
+      //console.log('here is the ID: ', id);
+      console.log('we passed getNextUnique with counter of: ', counter);
+      items[counter] = text;
+      var filePath = path.join(this.dataDir, counter + '.txt');
+      fs.writeFile(filePath, text, 'utf8', callback(null, { id: counter, text: text }));
+      //return counter;
+    }
+    // done();
+  });
+
+
+
 };
 
 exports.readAll = (callback) => {
