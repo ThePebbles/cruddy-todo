@@ -21,8 +21,6 @@ const readCounter = (callback) => {
     if (err) {
       callback(null, 0); //if no number, second parameter is 0
     } else {
-      console.log('This is file data', fileData);
-      console.log('This is line 24', Number(fileData));
       callback(null, Number(fileData)); //if number exists, second parameter is the number
     }
   });
@@ -47,12 +45,9 @@ exports.getNextUniqueId = (callback) => {
   //var count = 0;
   readCounter((err, counter1) => {
     if (err) {
-      console.log('error in read counter', err);
     } else { //if we do get a number
-      console.log(counter1);
       return writeCounter(counter1 = counter1 + 1, (err, counter1) => {
         if (err) {
-          console.log('error in write counter', err);
         } else {
           //count = counter1;
           //console.log('here is count: ', count);
