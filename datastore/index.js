@@ -25,7 +25,6 @@ exports.create = (text, callback) => {
   //https://www.geeksforgeeks.org/node-js-fs-writefile-method/
   counter.getNextUniqueId((err, counter) => {
     if (err) {
-      console.log('error in getNextUniqueId', err);
     } else { //if we do get a number
       //console.log('here is the ID: ', id);
       var filePath = path.join(this.dataDir, counter + '.txt');
@@ -37,19 +36,18 @@ exports.create = (text, callback) => {
           callback(null, { id: counter, text: text });
         }
       });
-      console.log('we passed getNextUnique with counter of: ', counter);
       //return counter;
     }
     // done();
   });
-
-
-
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
+  /*  Next, refactor the readAll function by returning an array of todos to client app whenever a GET request to the collection route occurs. To do this, you will need to read the dataDir directory and build a list of files. Remember, the id of each todo item is encoded in its filename. */
+  var items = fs.readdirSync(this.dataDir);
+  console.log('These are items: ', items);
+  var data = _.map(items, (id) => {
+    return { id: id.slice(0, -4), text: id.slice(0, -4) };
   });
   callback(null, data);
 };
