@@ -62,13 +62,33 @@ exports.readOne = (id, callback) => {
 };
 
 exports.update = (id, text, callback) => {
-  var item = items[id];
-  if (!item) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    items[id] = text;
-    callback(null, { id, text });
-  }
+  var path = this.dataDir + '/' + id + '.txt';
+  fs.stat(path, (err, stat) => {
+    if (err === null) {
+      //file exists
+      fs.readFile(path, 'utf-8', (err, data) => {
+        console.log('THIS IS DATA: ', data);
+        if (err || data === undefined) {
+          console.log('got an error, could not read file path');
+          console.log(err);
+          return err;
+        } else {
+          var newData = data.replace(data, text);
+          fs.writeFile(path, newData, (err) => {
+            console.log('here is the new data', newData);
+            if (err) {
+              return err;
+            } else {
+              callback(null, {id, text: data});
+            }
+          });
+        }
+      });
+    } else if (err.code === 'ENOENT') {
+      //file does not exists
+      callback(err);
+    }
+  });
 };
 
 exports.delete = (id, callback) => {
