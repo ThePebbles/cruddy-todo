@@ -23,15 +23,21 @@ exports.create = (text, callback) => {
 
   //https://nodejs.org/api/fs.html
   //https://www.geeksforgeeks.org/node-js-fs-writefile-method/
-  var id = counter.getNextUniqueId((err, counter) => {
+  counter.getNextUniqueId((err, counter) => {
     if (err) {
       console.log('error in getNextUniqueId', err);
     } else { //if we do get a number
       //console.log('here is the ID: ', id);
-      console.log('we passed getNextUnique with counter of: ', counter);
-      items[counter] = text;
       var filePath = path.join(this.dataDir, counter + '.txt');
-      fs.writeFile(filePath, text, 'utf8', callback(null, { id: counter, text: text }));
+      fs.writeFile(filePath, text, (err) => {
+        if (err) {
+          return err;
+        } else {
+          items[counter] = text;
+          callback(null, { id: counter, text: text });
+        }
+      });
+      console.log('we passed getNextUnique with counter of: ', counter);
       //return counter;
     }
     // done();
