@@ -45,10 +45,22 @@ exports.create = (text, callback) => {
 exports.readAll = (callback) => {
   /*  Next, refactor the readAll function by returning an array of todos to client app whenever a GET request to the collection route occurs. To do this, you will need to read the dataDir directory and build a list of files. Remember, the id of each todo item is encoded in its filename. */
   var items = fs.readdirSync(this.dataDir);
-  var data = _.map(items, (id) => {
-    return { id: id.slice(0, -4), text: id.slice(0, -4) };
+  //get an array of promises using map
+  var data = _.map(items, (fileName) => {
+    //return a promise
+    return new Promise ((resolve, reject) => {
+      fs.readFile(this.dataDir + '/' + fileName, 'utf8', (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({ id: fileName.slice(0, -4), text: data });
+        }
+      });
+    });
+    //return { id: id.slice(0, -4), text: id.slice(0, -4) };
   });
-  callback(null, data);
+  Promise.all(data).then((results) => callback(null, results)).catch((err) => callback(err));
+  //promise.all .then callback
 };
 
 exports.readOne = (id, callback) => {
